@@ -16,8 +16,6 @@ function createBoard(){
 function newGame(){
     resetGame();
     render();
-
-    console.log(state.currentGame);
 }
 
 function render(){
@@ -31,13 +29,19 @@ function renderBoard(){
     divBoard.innerHTML = '';
 
     var ulNumbers = document.createElement('ul')
+    ulNumbers.classList.add('numbers');
 
     for(var i = 0; i < state.board.length; i++){
         var currentNumber = state.board[i];
 
         var liNumber = document.createElement('li')
+        liNumber.classList.add('number');
         liNumber.textContent = currentNumber;
         liNumber.addEventListener('click', handleNumberClick)
+
+        if (isNumberInGame(currentNumber)){
+            liNumber.classList.add('selected-number');
+        }
 
         ulNumbers.appendChild(liNumber)
     }
@@ -54,7 +58,8 @@ function handleNumberClick(event){
         addNumberToGame(value);
     }
     
-    console.log(state.currentGame)
+    console.log(state.currentGame);
+    render();
 
 }
 
@@ -93,6 +98,7 @@ function createRandomGameButton(){
 function createSaveGameButton(){
     var button = document.createElement('button');
     button.textContent = 'Salvar Jogo';
+    button.disabled = !isGameComplete();
 
     button.addEventListener('click', saveGame)
 
@@ -100,7 +106,36 @@ function createSaveGameButton(){
 }
 
 function renderSavedGames(){
-    var divSavedGames = document.querySelector('#egasena-saved-games')
+    var divSavedGames = document.querySelector('#megasena-saved-games')
+    divSavedGames.innerHTML = '';
+
+    if (state.savedGames.length === 0){
+        divSavedGames.innerHTML = '<p>Nenhum jogo salvo <p/>'
+    } else {
+        var h2 = document.createElement('h2');
+        h2.textContent = 'Jogos salvos';
+        
+        var ulSavedGames = document.createElement('ul');
+        ulSavedGames.classList.add('saved-games');
+
+        for (var i = 0; i < state.savedGames.length; i++){
+            var currentGame = state.savedGames[i];
+
+            var liGames = document.createElement('li');
+            // liGames.textContent = currentGame.join(', ');
+
+            var numbers = currentGame
+            .map(number => number.toString().padStart(2, '0'))
+            .join(' ');
+
+            liGames.textContent = numbers;
+
+
+            ulSavedGames.appendChild(liGames)
+        }
+        divSavedGames.appendChild(h2);
+        divSavedGames.appendChild(ulSavedGames)
+    }
 
 }
 
@@ -116,10 +151,10 @@ function addNumberToGame(numberToAdd){
     if (isNumberInGame(numberToAdd)) {
         console.error('O número ', numberToAdd , ' já está no jogo')
         return;
-
     }
 
     state.currentGame.push(numberToAdd)
+    state.currentGame.sort();
 }
 
 function removeNumberFromGame(numberToRemove){
@@ -174,7 +209,9 @@ function randomGame(){
         var randomNumber = Math.ceil(Math.random() * 60);
         addNumberToGame(randomNumber);
     }
-    console.log(state.currentGame)
+    state.currentGame.sort();
+    console.log(state.currentGame);
+    render();
 }
 
 

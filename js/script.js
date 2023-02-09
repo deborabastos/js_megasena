@@ -62,9 +62,14 @@ function renderButtons(){
     var divButtons = document.querySelector('#megasena-buttons')
     divButtons.innerHTML = '';
     
-    var buttonGame = createNewGameButton();
+    var buttonNewGame = createNewGameButton();
+    var buttonRandomGame = createRandomGameButton();
+    var buttonSaveGame = createSaveGameButton();
 
-    divButtons.appendChild(buttonGame);
+    divButtons.appendChild(buttonNewGame);
+    divButtons.appendChild(buttonRandomGame);
+    divButtons.appendChild(buttonSaveGame);
+
 }
 
 function createNewGameButton(){
@@ -76,6 +81,23 @@ function createNewGameButton(){
     return button;
 }
 
+function createRandomGameButton(){
+    var button = document.createElement('button');
+    button.textContent = 'Jogo Aleatório';
+
+    button.addEventListener('click', randomGame)
+
+    return button;
+}
+
+function createSaveGameButton(){
+    var button = document.createElement('button');
+    button.textContent = 'Salvar Jogo';
+
+    button.addEventListener('click', saveGame)
+
+    return button;
+}
 
 function renderSavedGames(){
     var divSavedGames = document.querySelector('#egasena-saved-games')
@@ -131,6 +153,10 @@ function saveGame(){
         return;
     }
     state.savedGames.push(state.currentGame)
+    newGame();
+
+    console.log(state.savedGames);
+
 }
 
 function isGameComplete(){
@@ -140,5 +166,16 @@ function isGameComplete(){
 function resetGame(){
     state.currentGame = [];
 }
+
+function randomGame(){
+    resetGame();
+
+    while(!isGameComplete()){
+        var randomNumber = Math.ceil(Math.random() * 60);
+        addNumberToGame(randomNumber);
+    }
+    console.log(state.currentGame)
+}
+
 
 start();
